@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+          <em:id>jid1-KKzOGWgsW3Ao4Q@jetpack</em:id>
+          <em:type>2</em:type>
+          <em:bootstrap>true</em:bootstrap>
+          <em:unpack>false</em:unpack>
+          <em:version>3.5.0</em:version>
+          <em:name>I don&apos;t care about cookies</em:name>
+          <em:description>Get rid of annoying cookie warnings from almost all websites</em:description>
+          <em:creator>Daniel Kladnik @ kiboke studio</em:creator>
+          <em:optionsURL>data:text/xml,&lt;placeholder/&gt;</em:optionsURL>
+          <em:optionsType>2</em:optionsType>
+          <em:multiprocessCompatible>true</em:multiprocessCompatible>
+
+          <!-- Localization -->
+    <em:localized>
+        <Description>
+            <em:locale>fr-FR</em:locale>
+            <em:name>I don't care about cookies</em:name>
+            <em:description>Supprime les bandeaux d'approbation de cookie de dizaines de milliers de sites internet 'infectés'.</em:description>
+            <em:translator>TMTisFree</em:translator>
+        </Description>
+    </em:localized>
+	
+<em:targetApplication>
+            <Description>
+              <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+              <em:minVersion>20.0</em:minVersion>
+              <em:maxVersion>30.0</em:maxVersion>
+</Description>
+</em:targetApplication>
+
+          <em:targetApplication>
+            <Description>
+              <em:id>{aa3c5121-dab2-40e2-81ca-7ea25febc110}</em:id>
+              <em:minVersion>20.0</em:minVersion>
+              <em:maxVersion>30.0</em:maxVersion>
+</Description>
+</em:targetApplication>
+
+          <em:targetApplication>
+            <Description>
+              <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
+              <em:minVersion>27.1.0b1</em:minVersion>
+              <em:maxVersion>30.0</em:maxVersion>
+</Description>
+</em:targetApplication>
+
+          <em:targetApplication>
+            <Description>
+              <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+              <em:minVersion>2.46</em:minVersion>
+              <em:maxVersion>3.0</em:maxVersion>
+</Description>
+</em:targetApplication>
+
+
+    </Description>
+
+</RDF>

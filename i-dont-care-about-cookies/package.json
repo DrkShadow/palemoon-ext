@@ -1,0 +1,19 @@
+{
+  "name": "no-eu-cookie-uk",
+  "title": "I don't care about cookies",
+  "id": "jid1-KKzOGWgsW3Ao4Q@jetpack",
+  "description": "Get rid of annoying cookie warnings from almost all websites",
+  "author": "Daniel Kladnik @ kiboke studio",
+  "license": "MPL 2.0",
+  "main": "lib/main.js",
+  "permissions": {"private-browsing": true, "multiprocess": true},
+  "engines": {"firefox": ">=20.0", "fennec": ">=20.0", "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}": ">=27.1.0b1", "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}": ">=2.46 <=3.0"},
+  "preferences": [{
+    "name":"contextmenu",
+    "title":"Enable context menu options",
+    "description":"Display context menu options for reporting and whitelisting",
+    "type":"bool",
+    "value":true
+  }],
+  "version": "3.5.0"
+}
