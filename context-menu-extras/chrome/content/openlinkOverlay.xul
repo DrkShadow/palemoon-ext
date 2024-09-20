@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+  <!ENTITY % browserDTD SYSTEM "chrome://openlink/locale/openlink.dtd">
+  %browserDTD;
+  <!ENTITY % openlinkDTD SYSTEM "chrome://browser/locale/browser.dtd">
+  %openlinkDTD;
+]>
+
+<overlay id="openlinkoverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="openlinkOverlay.js"></script>
+
+  <popup id="contentAreaContextMenu">
+
+    <!-- <menu id="openlink-open-link"
+      label="&openlinkOpenLinkContextMenu.label;"
+      accesskey="&openlinkOpenLinkContextMenu.accesskey;"
+      insertbefore="context-sep-open">
+
+      <menupopup>
+        <menuitem id="openlink-open-link-in-new-tab"
+            label="&openlinkOpenSubmenuItemInNewTabCmd.label;"
+            accesskey="&openLinkCmdInTab.accesskey;"
+        />
+        <menuitem id="openlink-open-link-in-background-tab"
+            label="&openlinkOpenSubmenuItemInBackgroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundTabCmd.accesskey;"
+        />
+        <menuitem id="openlink-open-link-in-foreground-tab"
+            label="&openlinkOpenSubmenuItemInForegroundTabCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInForegroundTabCmd.accesskey;"
+        />
+        <menuitem id="openlink-open-link-in-new-window"
+            label="&openlinkOpenSubmenuItemInNewWindowCmd.label;"
+            accesskey="&openLinkCmd.accesskey;"
+        />
+        <menuitem id="openlink-open-link-in-background-window"
+            label="&openlinkOpenSubmenuItemInBackgroundWindowCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemInBackgroundWindowCmd.accesskey;"
+        />
+        <menuitem id="openlink-open-link-in-current-tab"
+            label="&openlinkOpenSubmenuItemHereCmd.label;"
+            accesskey="&openlinkOpenSubmenuItemHereCmd.accesskey;"
+        />
+      </menupopup>
+
+    </menu>
+	-->
+
+	<menuitem id="context-open-image-new-tab" label="Open image in new tab" accesskey="m"
+		observes="isImage" hidden="true" insertbefore="context-viewimage"
+		/>
+  </popup>
+</overlay>
