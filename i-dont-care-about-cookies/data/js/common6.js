@@ -1,74 +1,72 @@
-function getE(hostname)
-{
-	switch (hostname)
-	{
+function getE(hostname) {
+	switch (hostname) {
 		case 'letssingit.com':
 		case 'lyricsbox.com':
 			return ['cookieconsent=1111'];
-		
+
 		case 'kontaktbazar.at':
 		case 'hoernews.de':
 			return ['cookieconsent_status=dismiss'];
-		
+
 		case 'pee.place':
 		case 'nearest.place':
 		case 'postboxmap.com':
 			return ['gdprconsent=1'];
-		
+
 		case 'radioaustria.at':
 		case 'kronehit.at':
 			return ['consent=1'];
-		
+
 		case 'binumi.com':
 		case 'ravi.pl':
 			return ['idcac=1'];
-		
+
 		case 'fotoc.dk':
 		case 'fjshop.dk':
 			return ['cookiedough=1'];
-		
+
 		case 'esea.net':
 		case 'advodan.dk':
 			return ['cookie_consent=1'];
-		
+
 		case 'betterhelp.com':
 		case 'regain.us':
 			return ['gdpr_cookie_consent_given=yes'];
-		
+
 		case 'compteur.fr':
 		case 'lebens.guru':
 			return ['cookies_accepted=1'];
-		
+
 		case 'indonesia-publisher.id':
 		case 'ciustekno.me':
 			return ['cookieLaw=got_it'];
-		
+
 		case 'milkywire.com':
 		case 'freeletics.com':
 			return ['cookie_consent=true'];
-		
+
 		case 'prodyna.com':
 		case 'prodyna.ch':
 		case 'prodyna.at':
 		case 'prodyna.co.uk':
 			return ['prodyna-cookies=ALL'];
-		
+
 		case 'euroleague.net':
 		case 'eurocupbasketball.com':
 			return ['modalNotSeenEV=1', 'cookieBanner=true'];
-		
+
 		case 'reimageplus.com':
 		case 'xn---43-9cdulgg0aog6b.xn--p1ai':
 			return ['cookie_accepted=1'];
-		
+
 		case 'pruefungshelden.de':
 		case 'elopage.com':
 			return ['p_consent_accepted_shop=1%2C2'];
-		
+
 		case 'elvenar.com':
 		case 'forgeofempires.com':
 			return ['CookieNotification=1'];
-		
+
 		case 'temu.com': return ['privacy_setting=100'];
 		case 'livesexasian.com': return ['is_personalized_content_consent_given=1'];
 		case 'finantia.com': return ['finantia_cookie=active'];
@@ -218,50 +216,49 @@ function getE(hostname)
 		case 'webstore.zvw.de': return ['trackingAccepted=false'];
 		case 'topographic-map.com': return ['cookies=%7B%22analytics%22%3Afalse%2C%22advertisements%22%3Afalse%7D'];
 	}
-	
-	
-	var parts = hostname.split('.');
-	
-	if (parts.length > 2)
-	{
+
+
+	const parts = hostname.split('.');
+
+	if (parts.length > 2) {
 		parts.shift();
 		return getE(parts.join('.'));
 	}
-	
+
 	return false;
 }
 
 
-var hostname = document.location.hostname.replace(/^w{2,3}\d*\./i, ''),
-	cookies = getE(hostname);
-
-if (cookies)
 {
-	var counter = 0;
-	
-	cookies.forEach(function(cookie){
-		cookie = cookie.split('=');
-		var parts = ('; ' + document.cookie).split('; ' + cookie[0] + '=');
-		
-		if (parts.length < 2 || parts[1].split(';')[0] != cookie[1])
-		{
+const hostname = document.location.hostname.replace(/^w{2,3}\d*\./i, '');
+const cookies = getE(hostname);
+
+if (cookies) {
+	let counter = 0;
+
+	for (const cookie of cookies) {
+		const crumbs = cookie.split('=');
+		const parts = ('; ' + document.cookie).split('; ' + crumbs[0] + '=');
+
+		if (parts.length < 2 || parts[1].split(';')[0] != crumbs[1]) {
 			// First try to delete the cookie
-			
+
 			if (parts.length > 1) {
-				var domain_parts = hostname.split('.');
-				
+				const domain_parts = hostname.split('.');
+
 				while (domain_parts.length > 1) {
 					document.cookie = cookie[0] + '=; domain=' + domain_parts.join('.') + '; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 					domain_parts.shift();
 				}
 			}
-			
-			document.cookie = cookie[0] + '=' + cookie[1];
+
+			document.cookie = crumbs[0] + '=' + crumbs[1];
 			counter++;
 		}
-	});
-	
+	}
+
 	// Reload if cookies are enabled
 	if (counter > 0 && document.cookie.length > 0)
 		document.location.reload();
+}
 }

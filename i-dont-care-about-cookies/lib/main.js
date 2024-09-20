@@ -21,7 +21,8 @@ const cached_host_levels = {};
 
 // Whitelist
 
-var permanent_whitelist = {
+{
+const permanent_whitelist = {
 	"*.plus.google.com":1,
 	"*.hangouts.google.com":1,
 	"*.clients5.google.com":1,
@@ -33,15 +34,21 @@ var permanent_whitelist = {
 if (!ss.storage.global_exclude_list)
 	ss.storage.global_exclude_list = [];
 
-for (var i in ss.storage.global_exclude_list)
-	if (permanent_whitelist[ss.storage.global_exclude_list[i]])
-		permanent_whitelist[ss.storage.global_exclude_list[i]] = 0;
+{
+for (const idx of ss.storage.global_exclude_list) {
+	if (permanent_whitelist[idx])
+		permanent_whitelist[idx] = 0;
+}
+}
 
-for (var i in permanent_whitelist)
+{
+for (const i in permanent_whitelist) {
 	if (permanent_whitelist[i] == 1)
 		ss.storage.global_exclude_list.push(i);
+}
+}
+} // scope: permanent whitelist
 
-delete permanent_whitelist;
 
 ss.on("OverQuota", function(){
 	while (ss.quotaUsage > 1)
@@ -51,7 +58,7 @@ ss.on("OverQuota", function(){
 
 // Global rules
 
-var global_settings = {
+const global_settings = {
 	include:"*",
 	exclude:ss.storage.global_exclude_list,
 	attachTo:["existing","top","frame"],
@@ -59,7 +66,7 @@ var global_settings = {
 	contentScriptFile:d.url('js/embeds.js')
 };
 
-var global_settings_js = {
+const global_settings_js = {
 	include:"*",
 	exclude:ss.storage.global_exclude_list,
 	attachTo:["existing","top","frame"],
@@ -68,7 +75,6 @@ var global_settings_js = {
 
 var global_mod = p.PageMod(global_settings);
 var global_mod_js = p.PageMod(global_settings_js);
-
 
 // Prepare rules
 
@@ -85,9 +91,9 @@ request({
 	overrideMimeType: 'application/json',
 	onComplete:function(r){
 		domains = r.json;
-		
-		for (var i in domains)
-			custom_mods[i] = false;
+
+		for (const i in domains)
+			delete custom_mods[i];
 	}
 }).get();
 
@@ -102,119 +108,102 @@ request({
 
 // Activation functions
 
-function activate_domain(hostname)
-{
-	if (typeof custom_mods[hostname] != 'undefined')
-	{
-		if (custom_mods[hostname] != false)
+function activate_domain(hostname) {
+	if (Object.hasOwn(custom_mods, hostname)) {
+		if (Object.hasOwn(custom_mods, hostname))
 			return true;
-		
-		for (var i in ss.storage.global_exclude_list)
+
+		for (const i in ss.storage.global_exclude_list) {
 			if (ss.storage.global_exclude_list[i] == '*.'+hostname || ss.storage.global_exclude_list[i] == '*.www.'+hostname)
 				return true;
-		
-		var mod = {
+		}
+
+		const mod = {
 			include:'*.'+hostname,
 			attachTo:["existing","top","frame"]
 		};
-		
-		if (typeof domains[hostname].s != 'undefined')
+
+		if (Object.hasOwn(domains[hostname], 's'))
 			mod.contentStyle = domains[hostname].s;
-		else if (typeof domains[hostname].c != 'undefined')
+		else if (Object.hasOwn(domains[hostname], 'c'))
 			mod.contentStyle = commons[domains[hostname].c];
-		
-		if (typeof domains[hostname].j != 'undefined')
+
+		if (Object.hasOwn(domains[hostname], 'j'))
 			mod.contentScriptFile = d.url('js/'+(domains[hostname].j > 0 ? 'common'+domains[hostname].j : hostname)+'.js');
-		
+
 		custom_mods[hostname] = p.PageMod(mod);
-		
+
 		return true;
 	}
-	
+
 	return false;
 }
 
-function deactivate_domain(hostname)
-{
-	if (typeof custom_mods[hostname] != 'undefined')
-	{
-		if (custom_mods[hostname] == false)
-			return true;
-		
+function deactivate_domain(hostname) {
+	if (Object.hasOwn(custom_mods, hostname)) {
 		custom_mods[hostname].destroy();
-		custom_mods[hostname] = false;
+		delete custom_mods[hostname];
 		return true;
 	}
 
 	return false;
 }
 
-function toggle_activity(domain, notify)
-{
-	domain = domain.replace(/^w{2,3}\d*\./i, '');
-	
-	var domain_rule = '*.'+domain;
-	var deleted = 0;
-	
-	for (var i in ss.storage.global_exclude_list)
-	{
-		if (ss.storage.global_exclude_list[i] == domain_rule)
-		{
+function toggle_activity(domain_in, notify) {
+	const domain = domain_in.replace(/^w{2,3}\d*\./i, '');
+
+	const domain_rule = '*.'+domain;
+	let deleted = 0;
+
+	for (const i in ss.storage.global_exclude_list) {
+		if (ss.storage.global_exclude_list[i] == domain_rule) {
 			ss.storage.global_exclude_list.splice(i, 1);
 			deleted = 1;
 			break;
 		}
 	}
-	
+
 	if (deleted == 0)
 		ss.storage.global_exclude_list[ss.storage.global_exclude_list.length] = domain_rule;
-	
-	
+
+
 	global_mod.destroy();
 	global_mod = p.PageMod(global_settings);
-	
+
 	global_mod_js.destroy();
 	global_mod_js = p.PageMod(global_settings_js);
-	
-	
+
+
 	// Rebuild custom rule if any
-	if (deleted == 1)
-	{
-		if (!activate_domain(domain))
-		{
-			var possible_hosts = [];
-			var host_parts = domain.split('.');
-			
-			for (var i=host_parts.length; i>=2; i--)
-			{
-				var part = host_parts.slice(-1*i).join('.');
-				
+	if (deleted == 1) {
+		if (!activate_domain(domain)) {
+			const host_parts = domain.split('.');
+
+			for (const i=host_parts.length; i>=2; i--) {
+				const part = host_parts.slice(-1*i).join('.');
+
 				if (activate_domain(part))
 					break;
 			}
 		}
 	}
-	
+
 	// Destroy custom rule if any
-	else
-	{
-		if (!deactivate_domain(domain))
-		{
-			var possible_hosts = [];
-			var host_parts = domain.split('.');
-			
-			for (var i=host_parts.length; i>=2; i--)
-			{
-				var part = host_parts.slice(-1*i).join('.');
-				
+	else {
+		if (!deactivate_domain(domain)) {
+			const host_parts = domain.split('.');
+
+			// TODO: rework this.
+			for (const i=host_parts.length; i>=2; i--) {
+				const part = host_parts.slice(-1*i).join('.');
+
 				if (deactivate_domain(part))
 					break;
 			}
 		}
 	}
-	
-	
-	if (typeof notify != 'undefined')
+
+	if (notify == null)
 		sendMessage("Functionality changed for " + domain, "Please reload the page now to see the efect.");
 }
 
@@ -223,7 +212,7 @@ function toggle_activity(domain, notify)
 
 const getSdkTabFromChromeTab = (chromeTab) => {
   const tabId = tabsUtils.getTabId(chromeTab);
-  for each (let sdkTab in tabs){
+  for (const sdkTab in tabs){
     if (sdkTab.id === tabId) {
       return sdkTab;
     }
@@ -233,183 +222,203 @@ const getSdkTabFromChromeTab = (chromeTab) => {
 
 const getTabFromChannel = (aChannel) => {
   try {
-    let notificationCallbacks = aChannel.notificationCallbacks || aChannel.loadGroup.notificationCallbacks;
+    const notificationCallbacks = aChannel.notificationCallbacks || aChannel.loadGroup.notificationCallbacks;
     if (!notificationCallbacks)
       return null;
 
-    let domWin = notificationCallbacks.getInterface(Ci.nsIDOMWindow);
-    let chromeTab = tabsUtils.getTabForContentWindow(domWin);
+    const domWin = notificationCallbacks.getInterface(Ci.nsIDOMWindow);
+    const chromeTab = tabsUtils.getTabForContentWindow(domWin);
     return getSdkTabFromChromeTab(chromeTab);
   }
   catch (e) {
     return null;
   }
-} 
+}
 
 
-function listener(event)
-{
-	var channel = event.subject.QueryInterface(Ci.nsIHttpChannel);
-	
-	if (/\.(jpg|jpeg|gif|png|ico)$/i.test(event.subject.URI.spec.split('?')[0]))
+function listener(event) {
+	const channel = event.subject.QueryInterface(Ci.nsIHttpChannel);
+
+	if (/\.(?:jp(?:g|eg)|gif|png|ico)$/i.test(event.subject.URI.spec.split('?')[0]))
 		return;
-	
-	var hostname = (event.subject.referrer ? event.subject.referrer.host : event.subject.URI.host);
-	var current_tab = getTabFromChannel(channel);
-	
-	if (current_tab) {
-		for (let tab of tabs) {
-			if (tab.id == current_tab.id) {
-				var url_parts = tab.url.match(/^https?\:\/\/(.+?)\//)
-				
-				if (url_parts && url_parts[1]) {
-					hostname = url_parts[1];
-				}
-			}
+
+	let hostname = (event.subject.referrer ? event.subject.referrer.host : event.subject.URI.host);
+	const current_tab = getTabFromChannel(channel);
+
+	if (!current_tab)
+		return;
+
+	for (const tab of tabs) {
+		if (tab.id != current_tab.id)
+			continue;
+
+		const url_parts = tab.url.match(/^https?\:\/\/(.+?)\//)
+
+		if (url_parts && url_parts[1]) {
+			hostname = url_parts[1];
 		}
 	}
-	else
-		return;
-	
+
 	hostname = hostname.replace(/^w{2,3}\d*\./i, '');
-	
+
 	url_blocking(channel, hostname);
-	
+
 	if (activate_domain(hostname))
 		return;
-	
-	var possible_hosts = [];
-	var host_parts = hostname.split('.');
-	
-	for (var i=host_parts.length; i>=2; i--)
+
+	const possible_hosts = [];
+	const host_parts = hostname.split('.');
+
+	// TODO: rework this -- use getHostLevels()
+	for (const i=host_parts.length; i>=2; i--) {
 		if (activate_domain(host_parts.slice(-1*i).join('.')))
 			return true;
+	}
 };
 
-function getHostLevels(hostname)
-{
-	if (!cached_host_levels[hostname])
-	{
+function getHostLevels(hostname) {
+	if (!cached_host_levels[hostname]) {
 		cached_host_levels[hostname] = [];
-		
-		var parts = hostname.split('.');
-		
-		for (var i=parts.length; i>=2; i--)
+
+		const parts = hostname.split('.');
+
+		// TODO: rework this
+		for (const i=parts.length; i>=2; i--)
 			cached_host_levels[hostname].push(parts.slice(-1*i).join('.'));
 	}
-	
+
 	return cached_host_levels[hostname];
 }
 
-function url_blocking(channel, hostname)
-{
-	for (var i in ss.storage.global_exclude_list)
-		if (ss.storage.global_exclude_list[i] == '*.'+hostname || ss.storage.global_exclude_list[i] == '*.www.'+hostname)
+function url_blocking(channel, hostname) {
+	for (const i in ss.storage.global_exclude_list) {
+		const gexcl = ss.storage.global_exclude_list[i];
+		// Instead of making strings, if (gexcl == '*.'+hostname || gexcl == '*.www.'+hostname)
+		const hostpos = gexcle.length - hostname.length;
+		if (gexcle.indexOf(hostname, hostpos) == hostpos &&
+				(gexcle.indexOf('*.', hostpos-2) == hostpos-2 ||
+				 gexcle.indexOf('*.www.', hostpos-6) == hostpos-6))
 			return;
-	
-	var clean_url = channel.URI.spec.split('?')[0],
+	}
+
+	const clean_url = channel.URI.spec.split('?')[0],
 		host_levels = getHostLevels(hostname);
-	
-	
+
+
 	// To shorten the checklist, many filters are grouped by keywords
-	
-	if (block_urls.common_groups)
-	{
-		for (var group in block_urls.common_groups)
-		{
-			if (channel.URI.spec.indexOf(group) > -1)
-			{
-				var group_filters = block_urls.common_groups[group];
-				
-				for (var i in group_filters)
-				{
-					if ((group_filters[i].q && channel.URI.spec.indexOf(group_filters[i].r) > -1) || (!group_filters[i].q && clean_url.indexOf(group_filters[i].r) > -1))
-					{
-						// Check for exceptions
-						
-						if (group_filters[i].e && host_levels.length > 0)
-							for (var level in host_levels)
-								for (var exception in group_filters[i].e)
-									if (group_filters[i].e[exception] == host_levels[level])
-										return;
-						
-						channel.cancel(Cr.NS_BINDING_ABORTED);
-						return;
+
+	if (block_urls.common_groups) {
+		for (const group in block_urls.common_groups) {
+			if (channel.URI.spec.indexOf(group) < 0)
+				continue;
+
+			const group_filters = block_urls.common_groups[group];
+
+			for (const i in group_filters) {
+				const group_filt = group_filters[i];
+
+				const groupfilt_r = group_filt.r;
+				const groupfilt_q = group_filt.q;
+				if ((!groupfilt_q || channel.URI.spec.indexOf(groupfilt_r) < 0) &&
+					(groupfilt_q || clean_url.indexOf(groupfilt_r) < 0))
+					continue;
+				//if ((group_filt.q && channel.URI.spec.indexOf(group_filt.r) > -1) || (!group_filt.q && clean_url.indexOf(group_filt.r) > -1)) {
+
+				// Check for exceptions
+				const groupfilt_e = group_filt.e
+				if (groupfilt_e && host_levels.length > 0) {
+					for (const level in host_levels) {
+						for (const exception in groupfilt_e) {
+							if (groupfilt_e[exception] == host_levels[level])
+								return;
+						}
 					}
 				}
-			}
-		}
-	}
-	
-	
-	// Check ungrouped filters
-	
-	if (block_urls.common)
-	{
-		var group_filters = block_urls.common;
-		
-		for (var i in group_filters)
-		{
-			if ((group_filters[i].q && channel.URI.spec.indexOf(group_filters[i].r) > -1) || (!group_filters[i].q && clean_url.indexOf(group_filters[i].r) > -1))
-			{
-				// Check for exceptions
-				
-				if (group_filters[i].e && host_levels.length > 0)
-					for (var level in host_levels)
-						for (var exception in group_filters[i].e)
-							if (group_filters[i].e[exception] == host_levels[level])
-								return;
-				
+
 				channel.cancel(Cr.NS_BINDING_ABORTED);
 				return;
 			}
 		}
-	}
-	
-	
-	// Site specific filters
-	
-	if (block_urls.specific)
-	{
-		for (var domain in block_urls.specific)
-		{
-			if (domain == hostname || hostname.endsWith('.'+domain))
-			{
-				for (var i in block_urls.specific[domain])
-				{
-					var rule = block_urls.specific[domain][i];
-					
-					if (channel.URI.spec.indexOf(rule) > -1)
-					{
-						channel.cancel(Cr.NS_BINDING_ABORTED);
-						return;
+	} // if blockurls.common groups
+
+
+	// Check ungrouped filters
+
+	if (block_urls.common) {
+		const group_filters = block_urls.common;
+
+		for (const i in group_filters) {
+			const group_filt = group_filters[i];
+
+			const groupfilt_r = group_filt.r;
+			const groupfilt_q = group_filt.q;
+			if ((!groupfilt_q || channel.URI.spec.indexOf(groupfilt_r) < 0) ||
+				(groupfilt_q || clean_url.indexOf(groupfilt_r) < 0))
+				continue;
+
+			//if ((group_filt.q && channel.URI.spec.indexOf(group_filt.r) > -1) || (!group_filt.q && clean_url.indexOf(group_filt.r) > -1)) {
+				// Check for exceptions
+
+			const groupfilt_e = group_filters[i].e;
+			if (groupfilt_e && host_levels.length > 0) {
+				for (const level in host_levels) {
+					// can this be `of`?
+					for (const exception in groupfilt_e) {
+						if (groupfilt_e[exception] == host_levels[level])
+							return;
 					}
 				}
 			}
+
+			channel.cancel(Cr.NS_BINDING_ABORTED);
+			return;
 		}
-	}
+	} // if blockurls.common
+
+
+	// Site specific filters
+
+	if (!block_urls.specific)
+		return;
+
+
+	const hostnamelen = hostname.length;
+	for (const domain in block_urls.specific) {
+
+		if (domain != hostname && !hostname.endsWith(domain))
+			continue;
+
+		// verify the form is ".hostname.domain" and not "xyzhostname.domain"
+		const dotpos = hostnamelen - domain.length - 1;
+		if (hostname.indexOf('.', dotpos) != dotpos)
+			continue;
+
+		for (const rule of block_urls.specific[domain]) {
+			if (channel.URI.spec.indexOf(rule) > -1) {
+				channel.cancel(Cr.NS_BINDING_ABORTED);
+				return;
+			}
+		}
+	} // domain in block urls
 }
 
 
-function setNotifications(options)
-{
+function setNotifications(options) {
 // 	if (options.loadReason === 'install')
 // 		tabs.open("https://www.i-dont-care-about-cookies.eu");
 
-	if (options.loadReason === 'upgrade')
-	{
+//	if (options.loadReason === 'upgrade') {
 // 		tabs.open("https://www.i-dont-care-about-cookies.eu/whats-new/acquisition/");
-		
+
 // 		require("sdk/notifications").notify({
 // 			title: "'I don't care about cookies' just got better",
 // 			text: "324 websites added to the list! You'll see even fewer cookie warnings than before :)\n\nMake a small donation to support this project: click here to open its homepage.",
 // 			onClick: function() {tabs.open("https://www.i-dont-care-about-cookies.eu/call-for-action/2018/");}
 // 		});
-	}
+//	}
 };
 
-function sendMessage(title, text)
-{
+function sendMessage(title, text) {
 	require("sdk/notifications").notify({
 			title: title,
 			text: text
@@ -417,54 +426,49 @@ function sendMessage(title, text)
 }
 
 // Android
-
-if (require("sdk/system").id == '{aa3c5121-dab2-40e2-81ca-7ea25febc110}')
-{
-	var {Cu} = require("chrome");
+if (require("sdk/system").id == '{aa3c5121-dab2-40e2-81ca-7ea25febc110}') {
+	const {Cu} = require("chrome");
 	Cu.import("resource://gre/modules/Services.jsm");
 	Cu.import("resource://gre/modules/Prompt.jsm");
 
-	var menuID = null;
-	
-	function toggleMenu(visible)
-	{
+	let menuID = null;
+
+	function toggleMenu(visible) {
 		let window = Services.wm.getMostRecentWindow("navigator:browser");
 		let NativeWindow = window.NativeWindow;
-		
-		if (visible == false)
-		{
-			if (menuID)
-			{
+
+		if (visible == false) {
+			if (menuID) {
 				NativeWindow.menu.remove(menuID);
 				menuID = null;
 			}
-			
+
 			return;
 		}
-		
+
 		menuID = NativeWindow.menu.add({
 			name:"I don't care about cookies"
 		});
-		
+
 		NativeWindow.menu.add({
 			name:"Report a cookie warning",
 			parent:menuID,
 			callback:function(){
 				tabs.open("https://www.i-dont-care-about-cookies.eu/report/"+self.version.match(/^\d+\.\d+\.\d+/)[0]+'/'+encodeURIComponent(encodeURIComponent(tabs.activeTab.url)));
 			}
-		}); 
-		
+		});
+
 		NativeWindow.menu.add({
 			name:"Toggle on this domain",
 			parent:menuID,
 			callback:function(){
 				var parts = tabs.activeTab.url.split('//');
-				
+
 				if (parts.length > 1)
 					toggle_activity(parts[1].split('/')[0].split(':')[0]);
 			}
 		});
-		
+
 		NativeWindow.menu.add({
 			name:"Support this project",
 			parent:menuID,
@@ -473,12 +477,12 @@ if (require("sdk/system").id == '{aa3c5121-dab2-40e2-81ca-7ea25febc110}')
 			}
 		});
 	}
-	
+
 	function androidContextMenuListener()
 	{
 		toggleMenu(prefs.prefs['contextmenu']);
 	}
-	
+
 	exports.main = function(options)
 	{
 		events.on("http-on-modify-request", listener);
@@ -486,7 +490,7 @@ if (require("sdk/system").id == '{aa3c5121-dab2-40e2-81ca-7ea25febc110}')
 		prefs.on("contextmenu", androidContextMenuListener);
 		setNotifications(options);
 	};
-	
+
 	exports.onUnload = function(reason)
 	{
 		if (reason == 'disable' || reason == 'uninstall')
@@ -497,28 +501,25 @@ if (require("sdk/system").id == '{aa3c5121-dab2-40e2-81ca-7ea25febc110}')
 			delete ss.storage.global_exclude_list;
 		}
 	};
-}
+} // android
 
 
 // Desktop
-
-else
-{
+else {
 	// Context menu
-	
-	var cm = require("sdk/context-menu");
-	var cm_menu = false;
-	
-	function toggleContextMenu(visible)
-	{
-		if (visible == false)
-		{
+
+	const cm = require("sdk/context-menu");
+	let cm_menu;
+
+	function toggleContextMenu(visible) {
+		if (visible == false) {
 			if (cm_menu)
 				cm_menu.destroy();
-			
+
 			return;
 		}
-		
+
+		// Shouldn't this be XUL?..
 		cm_menu = cm.Menu({
 			label:"I don't care about cookies",
 			image:d.url("images/context-menu.png"),
@@ -527,11 +528,11 @@ else
 				cm.Item({
 					label:"Report a cookie warning",
 					context:cm.URLContext(["http://*", "https://*"]),
-					
+
 					contentScript: '\
 						self.on("click", function() {self.postMessage({type: "report", url: (window.location != window.parent.location ? document.referrer : document.location.href)});});\
 					',
-					
+
 					onMessage: function (message) {
 						switch (message.type) {
 							case 'report':
@@ -540,74 +541,72 @@ else
 						}
 					}
 				}),
-				
+
 				cm.Item({
 					label: "Toggle on this website",
 					context:cm.URLContext(["http://*", "https://*"]),
-					
+
 					contentScript: '\
 						self.on("context", function() {self.postMessage({type: "info", url: (window.location != window.parent.location ? document.referrer : document.location.href)}); return true;});\
 						self.on("click", function() {self.postMessage({type: "toggle", url: (window.location != window.parent.location ? document.referrer : document.location.href)});});\
 					',
-					
+
 					onMessage: function (message) {
-						var parts = message.url.split('://');
-						
-						if (parts.length > 1 && (parts[0] == 'http' || parts[0] == 'https')) {
-							var hostname = parts[1].split('/')[0],
-								clean_hostname = hostname.replace(/^w{2,3}\d*\./i, ""),
-								domain = '*.' + clean_hostname;
-						} else {
+						const parts = message.url.split('://');
+
+						{
+						const schema = parts[0];	// Ignore unknown schemas, or bad URLs.
+						if (parts.length < 2 || !(schema == 'http' || schema == 'https')) {
 							return;
 						}
-						
+						}
+
+						const hostname = parts[1].split('/')[0];
+						const clean_hostname = hostname.replace(/^w{2,3}\d*\./i, "");
+						const domain = '*.' + clean_hostname;
+
 						switch (message.type) {
-							
 							case 'info':
-								for (var i in ss.storage.global_exclude_list) {
-									if (ss.storage.global_exclude_list[i] == domain) {
+								for (const excldom of ss.storage.global_exclude_list) {
+									if (excldom == domain) {
 										return this.label = "Enable on " + clean_hostname;
 									}
 								}
-								
+
 								this.label = "Disable on " + clean_hostname;
 								break;
-							
+
 							case 'toggle':
 								toggle_activity(hostname, true);
 								break;
 						}
 					}
 				}),
-				
+
 				cm.Item({
 					label:"Support this project",
 					contentScript:'self.on("click",function(){self.postMessage("donate");});',
 					onMessage:function(){
 						tabs.open("https://www.i-dont-care-about-cookies.eu/");
-					} 
+					}
 				})
 			]
 		});
 	}
-	
-	function contextMenuListener()
-	{
+
+	function contextMenuListener() {
 		toggleContextMenu(prefs.prefs['contextmenu']);
 	}
-	
-	exports.main = function(options)
-	{
+
+	exports.main = function(options) {
 		events.on("http-on-modify-request", listener);
 		toggleContextMenu(prefs.prefs['contextmenu']);
 		prefs.on("contextmenu", contextMenuListener);
 		setNotifications(options);
 	};
-	
-	exports.onUnload = function(reason)
-	{
-		if (reason == 'disable' || reason == 'uninstall')
-		{
+
+	exports.onUnload = function(reason) {
+		if (reason == 'disable' || reason == 'uninstall') {
 			events.off("http-on-modify-request", listener);
 			toggleContextMenu(false);
 			prefs.off("contextmenu", contextMenuListener);
