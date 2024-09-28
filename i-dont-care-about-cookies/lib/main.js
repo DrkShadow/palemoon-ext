@@ -1,3 +1,4 @@
+console.log('idcac loaded');
 const { Cc, Ci, Cr } = require("chrome");
 
 var events = require("sdk/system/events");
@@ -73,8 +74,11 @@ const global_settings_js = {
 	contentScriptFile:d.url('js/common.js')
 };
 
+console.log('global_mod:');
 var global_mod = p.PageMod(global_settings);
 var global_mod_js = p.PageMod(global_settings_js);
+console.log(global_mod);
+console.log(global_mod_js);
 
 // Prepare rules
 

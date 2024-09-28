@@ -1,4 +1,5 @@
 
+console.log("SearchLoop);");
 const searchPairLists = Object.freeze({
 	'.wp-exclude-emoji': [
 		'div[id^="bnnr"] > div[style*="; order: 1"] span',
@@ -502,6 +503,7 @@ const searchPairs = Object.freeze((function() {
 	})());
 
 function searchLoop(timeoutDuration, tries) {
+	console.log("Looper");
 	if (tries++ >= 30)
 		return;
 
