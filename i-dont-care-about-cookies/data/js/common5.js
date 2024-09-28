@@ -319,7 +319,7 @@ function getSelector(host) {
 		case 'fb.com':
 			return _if('.__fb-light-mode div[role="dialog"] a[href*="/policies/cookies"], .__fb-dark-mode div[role="dialog"] a[href*="/policies/cookies"]', 'div[role="dialog"] div[aria-hidden="true"] + [role="button"]', 'div[role="dialog"] [tabindex="-1"] > div > div:last-child [role="button"]');
 
-		case 'messenger.com':
+		case 'messenger.com': {
 			if (/^\/user_cookie_prompt\//.test(document.location.pathname))
 				return _chain('FLAG:UNIQUE', 'div:not(:only-child):first-child > div[role="button"]', 'div:not(:only-child):first-child > div[role="button"]');
 			else if (/\/privacy\/consent\/user_cookie_choice\//.test(document.location.pathname))
@@ -328,6 +328,7 @@ function getSelector(host) {
 			const elem = _sl('.uiLayer:last-child button[data-cookiebanner*="accept"]');
 			if (elem) elem.click();
 			return _sl('.hasCookieBanner button[data-cookiebanner*="accept"], #accept-cookie-banner-label');
+		}
 
 		case 'oversightboard.com':
 		case 'business.whatsapp.com':
@@ -413,24 +414,28 @@ function getSelector(host) {
 		case 'nauka.rocks':
 			return _ev("button[contains(., 'PRZECHODZ')]");
 
-		case 'octapharma.com':
+		case 'octapharma.com': {
 			const elem = _sl('#assistant-paper button');
 			return (elem && _ev("span[contains(., 'I agree')]", elem) ? elem : false);
+		}
 
-		case 'blick.ch':
+		case 'blick.ch': {
 			const elem = _sl('div[id^="sp_message"][class^="sp_message_container"]:not(.idcac)');
 			if (elem) elem.className += " idcac";
 			return elem;
+		}
 
-		case 'wacom.com':
+		case 'wacom.com': {
 			const elem = _sl('#consent_blackbar:not(.idcac)');
 			if (elem) elem.className += " idcac";
 			return elem;
+		}
 
-		case 'motocombo.pl':
+		case 'motocombo.pl': {
 			const elem = _sl('#topInfoContainer0:not(.idcac)');
 			if (elem) elem.className += " idcac";
 			return elem;
+		}
 
 		case 'wp.pl':
 			document.cookie = 'WP-cookie-info=1'; // wiadomosci
@@ -441,67 +446,78 @@ function getSelector(host) {
 		case 'petsie.nl':
 			return _sl('.jBlockerAccept');
 
-		case 'fifa.com':
+		case 'fifa.com': {
 			const elem = _sl('#root > div > div > svg');
 			if (elem) elem.dispatchEvent(new Event("click", {bubbles:true}));
 			return (elem ? elem : _sl('.mdl-overlay .close'));
+		}
 
 		case 'tallsay.com':
 		case 'plazilla.com':
 			return _sl('.buttonblue[name="cookieok"]');
 
-		case 'rain-alarm.com':
+		case 'rain-alarm.com': {
 			const elem = _id('privacypolicyAnalyticsYes');
 			if (elem) elem.click();
 			return _id('dialogButtonNo');
+		}
 
-		case 'watchadvisor.com':
+		case 'watchadvisor.com': {
 			const elem = _sl('#wa-base-gdpr-consent-form #edit-consent-cookies');
 			if (elem) elem.click();
 			return _sl('#wa-base-gdpr-consent-form #edit-submit');
+		}
 
-		case 'biorender.com':
+		case 'biorender.com': {
 			const elem = _sl('#___gatsby > div > div > div > div > div > div > div > a[href*="/privacy"]');
 			return (elem ? elem.parentNode.nextSibling.firstChild : false);
+		}
 
 		case 'puzzleyou.be':
 		case 'fotondo.cz':
 			return _id('cookies-consent-accept-all');
 
-		case 'match.com':
+		case 'match.com': {
 			const elem = _parent(_sl('a[data-cookie-no-optin][href*="cookie"]'));
 			return (elem ? elem.nextSibling : false);
+		}
 
-		case 'neu.de':
+		case 'neu.de': {
 			const elem = _parent(_sl('.js-cookie-no-optin'));
 			return (elem ? elem.nextSibling : false);
+		}
 
-		case 'kringloopapp.nl':
+		case 'kringloopapp.nl': {
 			const elem = _ev("h4[contains(., 'Cookies')]");
 			return (elem ? _id('modal-close') : false);
+		}
 
-		case 'marokko.nl':
+		case 'marokko.nl': {
 			const elem = _sl('.cookiealert .button');
 			if (elem) elem.dispatchEvent(new Event("mousedown"));
 			return false;
+		}
 
-		case 'totum.com':
+		case 'totum.com': {
 			const elem = _sl('.modal.active a[href*="cookie-policy"]');
 			return (elem ? _sl('a', elem.parentNode.nextSibling) : false);
+		}
 
 		case 'plt.nl':
 		case 'amphion.nl':
 			return _sl('.site-image .accept');
 
-		case 'thelily.com':
+		case 'thelily.com': {
 			const elem = _sl('.gdpr-wall[style] .agree-checkmark');
 			if (elem) elem.click();
 			return _sl('.gdpr-wall[style] .continue-btn');
+		}
 
-		case 'maps.arcgis.com': // s-leipzig
+		case 'maps.arcgis.com': { // s-leipzig
 			const elem = _sl('.jimu-widget-splash .jimu-checkbox');
 			if (elem) elem.click();
 			return _sl('.jimu-widget-splash .jimu-btn');
+		}
 
 		case 'nederpix.nl':
 		case 'birdpix.nl':
@@ -555,10 +571,11 @@ function getSelector(host) {
 		case 'msdmanuals.nl':
 			return _sl('.cookies + form .button');
 
-		case 'welcomemrbaby.com':
+		case 'welcomemrbaby.com': {
 			const elem = _sl('.mfp-ready .dont-show-me');
 			if (elem) elem.click();
 			return _sl(".mfp-ready .dont-show-label ~ a");
+		}
 
 		case 'moderne-landwirtschaft.de':
 		case 'thule.com':
@@ -571,13 +588,15 @@ function getSelector(host) {
 
 		case 'healthline.com':
 		case 'greatist.com':
-		case 'medicalnewstoday.com':
+		case 'medicalnewstoday.com': {
 			const elem = _sl('#modal-host button:not(.backdrop)');
 			return (elem && _ev("span[contains(., 'ACCEPT')]", elem) ? elem : false);
+		}
 
-		case 'reallygoodemails.com':
+		case 'reallygoodemails.com': {
 			const elem = _sl('#__next > div > .container');
 			return (elem ? _ev("button[contains(., 'Okay')]", elem) : false);
+		}
 
 		case 'mitsubishielectric.com':
 		case 'mea.com':
@@ -613,31 +632,36 @@ function getSelector(host) {
 		case 'wakelet.com': return _sl('#cookie-banner:not([hidden]) .close__icon', _sl('wk-ui-cookier-banner', _sl('my-app').shadowRoot).shadowRoot);
 		case 'arcteryx.com': return _sl('.cookies-disclaimer-bar[style*="auto"] .cookies-disclaimer-bar-close', _id('header-host').shadowRoot);
 
-		case 'android.com':
+		case 'android.com': {
 			let elem = _id('grid_page');
 			elem = elem && elem.shadowRoot ? _sl('cookie-bar', elem.shadowRoot) : false;
 			return (elem ? _sl('.ack-button', elem.shadowRoot) : false);
+		}
 
-		case 'e-pages.pub':
+		case 'e-pages.pub': {
 			let elem = _id('main');
 			elem = elem && elem.shadowRoot ? _sl('#main', elem.shadowRoot) : false;
 			elem = elem && elem.shadowRoot ? _sl('gdpr-comp-consent', elem.shadowRoot) : false;
 			return (elem && elem.shadowRoot ? _sl('#container paper-button:first-child', elem.shadowRoot) : false);
+		}
 
 		case 'prosieben.de':
-		case 'joyn.de':
+		case 'joyn.de': {
 			let elem = _sl('cmp-banner');
 			elem = elem && elem.shadowRoot ? _sl('.banner:not(.banner--hidden) cmp-dialog', elem.shadowRoot) : false;
 			elem = elem && elem.shadowRoot ? _sl('cmp-button[variant="primary"]', elem.shadowRoot) : false;
 			return (elem && elem.shadowRoot ? _sl('.button--primary', elem.shadowRoot) : false);
+		}
 
-		case 'trusted.de':
+		case 'trusted.de': {
 			const elem = _sl('trd-cookie-note', _id('trd-app').shadowRoot);
 			return (elem ? _sl('.ok', elem.shadowRoot) : false);
+		}
 
-		case 'expressvpn.com':
+		case 'expressvpn.com': {
 			const elem = _id('shadowHost');
 			return (elem && elem.shadowRoot ? _sl('.banner-accept-btn', elem.shadowRoot) : false);
+		}
 
 		case 'mmafighting.com':
 		case 'theverge.com':
@@ -658,9 +682,10 @@ function getSelector(host) {
 		case 'kaliszak.pl':
 			return '#js_rodo_window[style*="block"] .yes-to-all';
 
-		case 'theawesomer.com':
+		case 'theawesomer.com': {
 			const elem = _ev("span[contains(., 'Sounds Good, Thanks')]");
 			return (elem ? elem.parentNode : false);
+		}
 
 		case 'smdv.de':
 		case 'voelkner.de':
@@ -692,10 +717,11 @@ function getSelector(host) {
 		case 'lg-firmwares.com':
 			return '.fancybox-is-open #gdpr-accept';
 
-		case 'dsdollrobotics.com':
+		case 'dsdollrobotics.com': {
 			const elem = _sl('.pum-active[data-popmake*="eu-cookie"] .pum-close');
 			if (elem) elem.click();
 			return _sl('.pum-active[data-popmake*="one-more-thing"] .pum-close');
+		}
 
 		case 'biotechusa.hu':
 		case 'biotechusa.fr':
@@ -727,9 +753,10 @@ function getSelector(host) {
 		case 'gamer.nl':
 			return _if('.fixed.w-full.block a[href*="privacy"]', '.fixed.w-full.block button');
 
-		case 'idp.funktionstjanster.se':
+		case 'idp.funktionstjanster.se': {
 			const elem = _sl('.cookieContainer #ccbx');
 			return (elem && !elem.checked ? elem : false);
+		}
 
 		case 'betriebsrat.de':
 		case 'snp-online.de':
@@ -788,10 +815,11 @@ function getSelector(host) {
 		case 'oney.pt':
 			return _sl('.accept-cookies');
 
-		case 'zwolen.pl':
+		case 'zwolen.pl': {
 			const elem = _sl('#g_toplayer[style*="block"] .close');
 			if (elem) elem.click();
 			return _sl('#cook:not([style*="none"]) > a');
+		}
 
 		case 'hscollective.org':
 		case 'geefvoorzorgverleners.nl':
@@ -813,14 +841,16 @@ function getSelector(host) {
 		case 'mycall.no':
 			return _sl('.modal--cookie-consent[style*="block"] [data-target="acceptCookies"]');
 
-		case 'edimax.com':
+		case 'edimax.com': {
 			const elem = _sl('#world_lang_map[style*="block"] .cookies_close_btn span');
 			if (elem) _sl('#world_lang_map[style*="block"] .cookies_check').click();
 			return elem;
+		}
 
-		case 'apiko.com':
+		case 'apiko.com': {
 			const elem = _sl('#gatsby-focus-wrapper > div:last-child a[href*="gdpr"]');
 			return (elem ? elem.parentNode.nextSibling : false);
+		}
 
 		case 'skitenis.pl':
 		case 'holdentalesklep.eu':
@@ -877,9 +907,10 @@ function getSelector(host) {
 		// Elementor related - END
 
 
-		case 'crowdlitoken.ch':
+		case 'crowdlitoken.ch': {
 			const elem = _sl('#root > .shadow a[href*="privacy-policy"]');
 			return (elem ? elem.previousSibling : false);
+		}
 
 		case 'eigene-ip.de':
 		case 'verifyemailaddress.org':
@@ -907,9 +938,10 @@ function getSelector(host) {
 		case 'oberstdorf2021.com':
 			return _sl('.TraminoConsent.show .settings [value="acceptConsent"]');
 
-		case 'system.t-mobilebankowe.pl':
+		case 'system.t-mobilebankowe.pl': {
 			const elem = _ev("span[contains(., 'Zamknij')]");
 			return (elem ? elem.parentNode.parentNode.parentNode : false);
+		}
 
 		case 'sachsen-fernsehen.de':
 		case 'radio-trausnitz.de':
@@ -933,11 +965,12 @@ function getSelector(host) {
 		case 'l-bank.info':
 			return _sl('#bmLayerCookies.AP_st-visible .AP_mdf-all');
 
-		case 'wetransfer.com':
+		case 'wetransfer.com': {
 			const elem = _sl('.welcome--tandc .button.welcome__agree');
 			if (elem) elem.click();
 
 			return _sl('#tandcs[style*="block"] #accepting.enabled, .transfer__window.terms-conditions .transfer__button, .infobar--terms .button, .welcome__cookie-notice .welcome__button--accept');
+		}
 
 		case 'gmx.net':
 		case 'gmx.ch':
@@ -972,10 +1005,11 @@ function getSelector(host) {
 		case 'affiliate-deals.de':
 			return '.of-hidden .btn[data-cookie-save-settings]';
 
-		case 'henschel-schauspiel.de':
+		case 'henschel-schauspiel.de': {
 			const elem = _sl('#approveform .arrlink');
 			if (elem) _id('cconsentcheck').click();
 			return elem;
+		}
 
 		case 'gsk-gebro.at':
 		case 'voltadol.at':
@@ -1001,13 +1035,15 @@ function getSelector(host) {
 		case 'frischteigwaren-huber.de':
 			return _sl('.overlay.active[data-overlay="privacy"] .overlay_close');
 
-		case 'campusjaeger.de':
+		case 'campusjaeger.de': {
 			const elem = _sl('.ReactModal__Overlay--after-open');
 			return (elem && _ev("h4[contains(., 'Cookies')]") ? _sl('button + button', elem) : false);
+		}
 
-		case 'oxxio.nl':
+		case 'oxxio.nl': {
 			const elem = _sl('.c-modal__content--after-open');
 			return (elem && _ev("span[contains(., 'cookiebeleid')]", elem) ? _sl('button', elem) : false);
+		}
 
 
 		// .v--modal-overlay related - BEGIN
@@ -1044,15 +1080,17 @@ function getSelector(host) {
 		case 'patronsdecouture.com': return _chain('.amgdprcookie-modal-container._show .amgdprcookie-button:first-child', '.modal-popup.no-header._show button');
 
 
-		case 'fiftysix.nl':
+		case 'fiftysix.nl': {
 			const elem = _id('cookie_advertising--false');
 			if (elem) elem.click();
 			return _sl('.cookiePopup .bttn');
+		}
 
-		case 'openjobmetis.it':
+		case 'openjobmetis.it': {
 			const elem = _id('cookie_msg');
 			if (elem) elem.className += " idcac";
 			return elem;
+		}
 
 		case 'kinopolis.de':
 		case 'mathaeser.de':
@@ -1084,20 +1122,23 @@ function getSelector(host) {
 		case 'spar.hu':
 		case 'spar.hr':
 		case 'spar.at':
-		case 'interspar.at':
+		case 'interspar.at': {
 			const elem = _id('cmpwrapper');
 			if (elem && elem.shadowRoot) _sl('#cmppurposelabelpc3', elem.shadowRoot).click();
 			return (elem && elem.shadowRoot ? _sl('.cmpboxbtnsave', elem.shadowRoot) : false);
+		}
 
 		case 'winfuture.de':
-		case 'spar.si':
+		case 'spar.si': {
 			const elem = _id('cmpwrapper');
 			return (elem && elem.shadowRoot ? _sl('.cmpboxbtnyes', elem.shadowRoot) : false);
+		}
 
-		case 'coupons.de':
+		case 'coupons.de': {
 			const elem = _id('cmpwrapper');
 			if (elem) elem.setAttribute('onclick', 'window.cmpmngr.setConsentViaBtn(0)');
 			return elem;
+		}
 
 		case 'bafin.de':
 		case 'onlinezugangsgesetz.de':
@@ -1119,9 +1160,10 @@ function getSelector(host) {
 		case 'der-druckerprofi.de':
 			return '#cookie_save';
 
-		case 'targeo.pl':
+		case 'targeo.pl': {
 			const elem = _sl('body > div > div > span > a[href*="regulamin"]');
 			return (elem ? elem.parentNode.nextSibling.firstChild : false);
+		}
 
 		case 'centogene.com':
 		case 'leica-microsystems.com':
@@ -1147,18 +1189,20 @@ function getSelector(host) {
 		case 'roztoczanskipn.pl':
 			return _sl('#rodo-modal[style*="block"] .btn-primary');
 
-		case 'binance.com':
+		case 'binance.com': {
 			const elem = _sl('#__APP ~ div > div > a[href*="privacy"]');
 			return (elem ? elem.parentNode.nextSibling : false);
+		}
 
 		case 'volleybal.nl':
 		case 'vitesse-waterontharder.com':
 			return _sl('.show-cookie-overlay .js-save-all-cookies');
 
-		case 'webdamdb.com':
+		case 'webdamdb.com': {
 			const elem = _sl('.cookie-save-btn');
 			if (elem) {_id('cookie-cat-0').click(); _id('cookie-cat-1').click();}
 			return elem;
+		}
 
 		case 'quooker.de':
 		case 'quooker.be':
@@ -1177,10 +1221,11 @@ function getSelector(host) {
 		case 'christian-lindner.de':
 			return '#uv-gdpr-consent-necessary-form #edit-submit--2';
 
-		case 'bing.com':
+		case 'bing.com': {
 			const elem = _id('bnp_btn_preference');
 			if (elem) elem.click();
 			return _sl('#cookie_preference[style*="block"] .mcp_savesettings a');
+		}
 
 		case 'urgibl.de':
 		case 'bruns.de':
@@ -1342,9 +1387,10 @@ function getSelector(host) {
 		case 'lomax.se':
 			return '#coiOverlay[style*="flex"] #declineButton';
 
-		case 'modrykonik.sk':
+		case 'modrykonik.sk': {
 			const elem = _sl('.redux-toastr + div a[href*="cookie-policy"]');
 			return (elem ? elem.parentNode.nextSibling : false);
+		}
 
 		case 'gp-tuning.at':
 		case 'chiptuning-express-tirol.at':
@@ -1415,9 +1461,10 @@ function getSelector(host) {
 		case 'hagengrote.at':
 			return _sl('.modal[style*="block"] #cookieStart .btn-primary');
 
-		case 'patreon.com':
+		case 'patreon.com': {
 			const elem = _sl('div[aria-live="polite"] a[href*="policy/cookies"]');
 			return (elem ? _parent(_parent(_parent(_parent(elem)))).nextSibling.firstChild : elem);
+		}
 
 		case 'rtl.hr':
 		case 'fernsehserien.de':
@@ -1555,10 +1602,11 @@ function getSelector(host) {
 		case 'petenkoiratarvike.com':
 			return _chain('#cookie_consent[style*="block"] #cookie_settings', '#submit_privacy_consent');
 
-		case 'de.vanguard':
+		case 'de.vanguard': {
 			const elem = _ev('button[contains(text(), "Cookies zulassen")]/following::button');
 			if (elem) elem.click();
 			return _sl('div[data-cy="CookieConsentDialog"] button[data-cy*="Accept"] ~ button');
+		}
 
 		case 'kvno.de':
 		case 'xetra-gold.com':
@@ -1572,10 +1620,11 @@ function getSelector(host) {
 		case 'allfinanz.ag':
 			return _chain('.dva-state-active .dva-m-cookie-overlay__btn--more-info', '.dva-state-active .dva-m-cookie-settings-overlay__btn--save');
 
-		case 'arbeitsagentur.de':
+		case 'arbeitsagentur.de': {
 			let elem = _sl('bahf-cookie-disclaimer, bahf-cookie-disclaimer-dpl3');
 			elem = elem && elem.shadowRoot ? elem.shadowRoot : elem;
 			return (elem ? _sl('.modal.in .ba-btn-contrast, .modal-open .ba-btn-contrast', elem) : _sl('#cookieDialog[style*="block"] .ba-btn-contrast'));
+		}
 
 		case 'rugbyworldcup.com':
 		case 'world.rugby':
@@ -1615,9 +1664,10 @@ function getSelector(host) {
 		case 'erc-ingolstadt.de':
 			return '#sf_cookie_button_select';
 
-		case 'futurzwei.org':
+		case 'futurzwei.org': {
 			const elem = _sl('#cookie-consent:not([closed])', _sl('f2-app').shadowRoot);
 			return (elem && elem.shadowRoot ? _sl('#disable', elem.shadowRoot) : false);
+		}
 
 		case 'portainer.io':
 		case 'gitbook.io':
@@ -1642,13 +1692,14 @@ function getSelector(host) {
 		case 'threads.com':
 			return _if('#portals-root a[href*="privacy"]', '//div[@id="portals-root"]//*[text()="Reject all"]');
 
-		case 'tumblr.com':
+		case 'tumblr.com': {
 			const elem = _sl('#cmp-app-container iframe');
 			if (elem) {
 				const e2 = _sl('.cmp__dialog-footer-buttons button.is-secondary:not(.' + classname + ')', elem.contentWindow.document);
 				if (e2) {e2.classList.add(classname); e2.click();}
 			}
 			return (elem ? _sl('.cmp__dialog-footer-buttons button.is-secondary:not(.' + classname + ')', elem.contentWindow.document) : elem);
+		}
 
 		case 'iltalehti.fi':
 		case 'autotalli.com':
@@ -1721,21 +1772,24 @@ function getSelector(host) {
 		case 'schweinske.de':
 		case 'notebooksbilliger.de':
 		case 'webasto.com':
-		case 'sundair.com':
+		case 'sundair.com': {
 			const elem = _id('usercentrics-root');
 			return (elem && elem.shadowRoot ? _sl('button[data-testid="uc-accept-all-button"]', elem.shadowRoot) : false);
+		}
 
-		case 'justwatch.com':
+		case 'justwatch.com': {
 			let elem = _sl('.consent-overlay__ctas--secondary');
 			if (elem) elem.click();
 			elem = _id('usercentrics-root');
 			return (elem && elem.shadowRoot ? _sl('button[data-testid="uc-save-button"]', elem.shadowRoot) : false);
+		}
 
-		case 'alternate.de':
+		case 'alternate.de': {
 			let elem = _sl('.cookie-acceptance-media-consent-accept');
 			if (elem) elem.click();
 			elem = _id('usercentrics-root');
 			return (elem && elem.shadowRoot ? _sl('button[data-testid="uc-deny-all-button"]', elem.shadowRoot) : false);
+		}
 
 		case 'die-kolping-akademie.de': return '.uc-embedding-accept';
 		case 'wir-machen-druck.de': return _chain('#uc-btn-more-info-banner', '.uc-save-settings-button');
@@ -1764,16 +1818,17 @@ function getSelector(host) {
 		case 'grafik-werkstatt.de':
 			return '#cookie-block[style*="block"] #btn-allow';
 
-		case 'lefigaro.fr':
+		case 'lefigaro.fr': {
 			const elem = _sl('.appconsent_noscroll #appconsent iframe');
 			return (elem ? _sl('.button__skip', elem.contentWindow.document) : elem);
+		}
 
 		case 'abonnement.lefigaro.fr':
 			if (/\?redirect_uri/.test(document.location.search))
 				history.back();
 			return 'body';
 
-		case 'hellozdrowie.pl':
+		case 'hellozdrowie.pl': {
 			const elem = _id('cmp-iframe');
 
 			if (elem) {
@@ -1790,6 +1845,7 @@ function getSelector(host) {
 			}
 
 			return elem;
+		}
 
 		case 'nordax.no':
 		case 'nordax.de':
@@ -1892,11 +1948,12 @@ function getSelector(host) {
 		// acris related - BEGIN
 
 
-		case 'so.energy':
+		case 'so.energy': {
 			const elem = _sl('app-footer');
 			const button = elem && elem.shadowRoot ? _sl('.cookie-banner button.is-secondary', elem.shadowRoot) : false;
 			if (button) button.click();
 			return (elem && elem.shadowRoot ? _sl('.cookie-modal button.is-secondary', elem.shadowRoot) : false);
+		}
 
 		case 'euranseurakunta.fi':
 		case 'rovaniemenseurakunta.fi':
@@ -2104,10 +2161,11 @@ function getSelector(host) {
 			return '.cookie-disclaimer[style*="block"] .js-notification-reject';
 
 		case 'education.lego.com': return _if('div[data-testid="modal"] a[href*="cookie-policy"]', 'div[data-testid="modal"] hr + div button:first-child');
-		case 'lego.com':
+		case 'lego.com': {
 			const elem = _sl('button[data-test="cookie-necessary-button"]');
 			if (elem) elem.click();
 			return false;
+		}
 
 		case 'eon-highspeed.com':
 		case 'netcom-kassel.de':
@@ -2212,9 +2270,10 @@ function getSelector(host) {
 		case 'buyzoxs.de': return _chain('.modal[style*="block"] .js-gdpr-settings', '#btnDeny.js-gdpr-submit');
 		case 'zoxs.de': return _chain('.modal[style*="block"] .gdpr-extend', '#btnDeny.js-gdpr-submit');
 
-		case 'jolstad.no':
+		case 'jolstad.no': {
 			const elem = _sl('adstate-portal[usecookiepopup] app-wrapper');
 			return elem ? _sl('#cookie-pop-up-only-necessary', elem.shadowRoot) : false;
+		}
 
 		case 'naturschutz-sh.de':
 		case 'stiftungsland.de':
@@ -2230,10 +2289,11 @@ function getSelector(host) {
 			else
 				return 'button[title="Cookie Opt-In"] + button, #modal_gdpr[style*="block"] .reject_btn, #gateway-content button + button';
 
-		case 'uphold.com':
+		case 'uphold.com': {
 			let elem = _sl('#__next > div > div:first-child > p a[href*="cookie-policy"]');
 			elem = elem ? _ev('div[@id="__next"]/div[./div[1]//a[contains(@href, "cookie-policy")]]') : elem;
 			return (elem && window.getComputedStyle(elem).getPropertyValue('transform') == 'none' ? '//div[@id="__next"]/div[./div[1]//a[contains(@href, "cookie-policy")]]//button/following-sibling::button' : false);
+		}
 
 		case 'autoersatzteile.de':
 		case 'autoteiledirekt.de':

@@ -490,7 +490,7 @@ const searchGroups = Object.freeze([
 	div[data-cookie-path] a[href*="technologies/cookies"] + div'.replace("\n\t", "")
 ]);
 
-const searchGroupsLength = Object.freeze(searchGroups.length));
+const searchGroupsLength = Object.freeze(searchGroups.length);
 const searchPairKeys = Object.freeze(Object.keys(searchPairLists));
 const searchPairsJoinedKeys = Object.freeze(searchPairKeys.join(','));
 const searchPairs = Object.freeze((function() {
@@ -501,23 +501,10 @@ const searchPairs = Object.freeze((function() {
 		return spairs;
 	})());
 
-function getHtml() {
-		const html = document.querySelector('html');
+function searchLoop(timeoutDuration, tries) {
+	if (tries++ >= 30)
+		return;
 
-		htmltries++;
-		if (htmltries > 30) {
-			clearInterval(start);
-			return;
-		}
-
-		if (!html || /idc0_350/.test(html.className))
-			return;
-
-		html.classList.add('idc0_350');
-		searchLoop(0);
-		clearInterval(start);
-}
-function looper() {
 	for (const box of document.querySelectorAll(searchPairsJoinedKeys)) {
 		for (const selector of searchPairKeys) {
 			if (!box.matches(selector))
@@ -544,7 +531,8 @@ function looper() {
 		}
 	}
 
-	for (const element of document.querySelectorAll(searchGroups[counter%searchGroupsLength])) {
+	for (const searchgroup of searchGroups) {
+	for (const element of document.querySelectorAll(searchgroup)) {
 		if (!element.click || element.classList.contains('idcac'))
 			continue;
 
@@ -558,31 +546,17 @@ function looper() {
 
 		// The 2nd click is just to be sure. Avoid when a double click breaks the process.
 		if (element.getAttribute('aria-pressed') != 'true') // ".qc-cmp2" related
-			setTimeout(function() { if (element) element.click(); }, 500);
+			setTimeout(function() { if (element) element.click(); }, 300);
 
 		timeoutDuration += 500;
 	}
-
-	if (counter < 100*searchGroupsLength)
-		searchLoop(counter+1);
-}
-
-function doit() {
-	let timeoutDuration = 300;
-	let searchlooptries = 0;
-
-	function searchLoop(counter) {
-		searchlooptries++;
-		if (searchlooptries > 30)
-			return;
-
-		setTimeout(looper, timeoutDuration);
-
-		timeoutDuration += 150;
 	}
 
-	let htmltries = 0;
-	const start = setInterval(getHtml, 500);
+	setTimeout(function() {searchLoop(timeoutDuration, tries);}, timeoutDuration);
 }
 
-doit();
+if (document.readyState == 'complete')
+	searchLoop(150, 0);
+else
+	document.onload = function() { searchLoop(150, 0); }
+
