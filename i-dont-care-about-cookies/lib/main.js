@@ -1,6 +1,6 @@
 console.log('idcac loaded');
 const { Cc, Ci, Cr } = require("chrome");
-
+console.log('idcac loaded');
 var events = require("sdk/system/events");
 var request = require("sdk/request").Request;
 var p = require("sdk/page-mod");
@@ -19,7 +19,6 @@ var block_urls = {};
 
 const cached_host_levels = {};
 
-
 // Whitelist
 
 {
@@ -35,21 +34,16 @@ const permanent_whitelist = {
 if (!ss.storage.global_exclude_list)
 	ss.storage.global_exclude_list = [];
 
-{
 for (const idx of ss.storage.global_exclude_list) {
 	if (permanent_whitelist[idx])
 		permanent_whitelist[idx] = 0;
 }
-}
 
-{
 for (const i in permanent_whitelist) {
 	if (permanent_whitelist[i] == 1)
 		ss.storage.global_exclude_list.push(i);
 }
-}
 } // scope: permanent whitelist
-
 
 ss.on("OverQuota", function(){
 	while (ss.quotaUsage > 1)
@@ -74,11 +68,15 @@ const global_settings_js = {
 	contentScriptFile:d.url('js/common.js')
 };
 
-console.log('global_mod:');
+console.error('global_mod:');
 var global_mod = p.PageMod(global_settings);
 var global_mod_js = p.PageMod(global_settings_js);
-console.log(global_mod);
-console.log(global_mod_js);
+//console.error('global_mod:');
+//console.error(global_mod);
+//console.error('global_mod_js:');
+//console.error(global_mod_js);
+console.error('ok.');
+
 
 // Prepare rules
 
@@ -157,18 +155,18 @@ function toggle_activity(domain_in, notify) {
 	const domain = domain_in.replace(/^w{2,3}\d*\./i, '');
 
 	const domain_rule = '*.'+domain;
-	let deleted = 0;
+	let deleted = false;
 
 	for (const i in ss.storage.global_exclude_list) {
 		if (ss.storage.global_exclude_list[i] == domain_rule) {
 			ss.storage.global_exclude_list.splice(i, 1);
-			deleted = 1;
+			deleted = true;
 			break;
 		}
 	}
 
-	if (deleted == 0)
-		ss.storage.global_exclude_list[ss.storage.global_exclude_list.length] = domain_rule;
+	if (!deleted)
+		ss.storage.global_exclude_list.push(domain_rule);
 
 
 	global_mod.destroy();
@@ -179,7 +177,7 @@ function toggle_activity(domain_in, notify) {
 
 
 	// Rebuild custom rule if any
-	if (deleted == 1) {
+	if (deleted) {
 		if (!activate_domain(domain)) {
 			const host_parts = domain.split('.');
 
@@ -214,7 +212,7 @@ function toggle_activity(domain_in, notify) {
 
 // https://stackoverflow.com/questions/25194928/firefox-detect-tab-id-in-sdk-system-events-api
 
-const getSdkTabFromChromeTab = (chromeTab) => {
+function getSdkTabFromChromeTab(chromeTab) {
   const tabId = tabsUtils.getTabId(chromeTab);
   for (const sdkTab in tabs){
     if (sdkTab.id === tabId) {
@@ -222,9 +220,9 @@ const getSdkTabFromChromeTab = (chromeTab) => {
     }
   }
   return null;
-};
+}
 
-const getTabFromChannel = (aChannel) => {
+function getTabFromChannel(aChannel) {
   try {
     const notificationCallbacks = aChannel.notificationCallbacks || aChannel.loadGroup.notificationCallbacks;
     if (!notificationCallbacks)
@@ -278,7 +276,7 @@ function listener(event) {
 		if (activate_domain(host_parts.slice(-1*i).join('.')))
 			return true;
 	}
-};
+}
 
 function getHostLevels(hostname) {
 	if (!cached_host_levels[hostname]) {
@@ -420,7 +418,7 @@ function setNotifications(options) {
 // 			onClick: function() {tabs.open("https://www.i-dont-care-about-cookies.eu/call-for-action/2018/");}
 // 		});
 //	}
-};
+}
 
 function sendMessage(title, text) {
 	require("sdk/notifications").notify({

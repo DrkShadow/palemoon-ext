@@ -1,5 +1,5 @@
 {
-  "name": "no-eu-cookie-uk",
+  "name": "i-dont-care-about-cookies",
   "title": "I don't care about cookies",
   "id": "jid1-KKzOGWgsW3Ao4Q@jetpack",
   "description": "Get rid of annoying cookie warnings from almost all websites",
@@ -13,7 +13,7 @@
     "title":"Enable context menu options",
     "description":"Display context menu options for reporting and whitelisting",
     "type":"bool",
-    "value":true
+    "value":false
   }],
   "version": "3.5.0"
 }
